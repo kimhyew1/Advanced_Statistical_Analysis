@@ -134,3 +134,19 @@ x_grid = seq(0, 1, length.out = 200)
 lines(x_grid, predict_spline(model, x_grid), col = "red")   # f_hat
 
 
+
+####################################
+plot_spline = function(x_values, y_values, model, grid_x) {
+  y_pred = predict_spline(model, grid_x)
+  
+  data_plot = data.frame(x = x_values, y = y_values)
+  spline_plot = data.frame(x = grid_x, y = y_pred)
+  
+  ggplot() +
+    geom_point(data = data_plot, aes(x, y), color = "black") +
+    geom_line(data = spline_plot, aes(x, y), color = "blue") +
+    labs(title = "Fitted B-spline Regression", x = "x", y = "y") +
+    theme_minimal()
+}
+
+plot_spline(x_values, y_values, model, seq(0, 1, length.out = 100))
