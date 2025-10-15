@@ -1,8 +1,60 @@
+---
+title: "HW01"
+author: "KimHyewon"
+date: "2025-10-15"
+output: pdf_document
+---
+
+# Problem 01
+```{r}
+set.seed(1)
+n = 200
+x = seq(0, 1, length.out = n)
+y = sin(2*pi*x) + rnorm(n, sd = 0.15)
+```
+
+## (a)
+```{r}
+# dir.create("./data")
+# dir.create("./R")
+# dir.create("./plots")
+
+df <- data.frame(x = x, y = y)
+write.csv(df, "./data/data.csv", row.names = F)
+```
+
+## (b)
+```{r, results='hide'}
+read.csv("./data/data.csv")
+
+library(ggplot2)
+ggplot(df, aes(x = x, y = y)) + 
+  geom_point(color = "black") + 
+  geom_smooth(method = "lm", 
+              formula = y ~ poly(x, 3),
+              color = "red") +
+  theme_minimal()
+```
+
+## (c)
+```{r}
+p = ggplot(df, aes(x = x, y = y)) + 
+  geom_point(color = "black") + 
+  geom_smooth(method = "lm", 
+              formula = y ~ poly(x, 3),
+              color = "red") +
+  theme_minimal()
+ggsave(filename = "./plots/plot.png", plot = p,
+       width = 6, height = 4, units = "in",)
+```
+
+## (d)
+https://github.com/kimhyew1/Advanced_Statistical_Analysis
+
+
 # Problem 02
 ## (a)
-set.seed(1)
-x = runif(10)
-
+```{r}
 bubble_sort <- function(x, ascending = T) {
   n = length(x)
   
@@ -31,13 +83,18 @@ bubble_sort <- function(x, ascending = T) {
   }
   return (x)
 }
-bubble_sort(x, ascending = T)
-bubble_sort(x, ascending = F)
+```
 
-## (b)
+```{r}
 set.seed(1)
 x = runif(10)
 
+bubble_sort(x, ascending = T)
+bubble_sort(x, ascending = F)
+```
+
+## (b)
+```{r}
 quick_sort <- function(x, ascending = T) {
   n <- length(x)
   if (n <= 1) return(x)
@@ -79,19 +136,19 @@ quick_sort <- function(x, ascending = T) {
 
   return(result)
 }
+```
+
+```{r}
+set.seed(1)
+x = runif(10)
 
 quick_sort(x, ascending = T)
 quick_sort(x, ascending = F)
-
+```
 
 # Problem 03
 ## (a)
-x = seq(0, 2*pi, length.out = 100)
-f = function(x) {
-  return(cos(x) - x)
-}
-
-
+```{r}
 derivative_function = function(x, f, h = 1e-6, method = "forward") {
   if (method == "forward") {
     h = (f(x+h) - f(x)) / h
@@ -102,19 +159,32 @@ derivative_function = function(x, f, h = 1e-6, method = "forward") {
   }
   return(h)
 }
+```
+
+```{r}
+x = seq(0, 2*pi, length.out = 100)
+f = function(x) {
+  return(cos(x) - x)
+}
+f_prim_true = -sin(x) - 1
 
 forw = derivative_function(x, f, method = "forward")
 back = derivative_function(x, f, method = "backward")
 cent = derivative_function(x, f, method = "central")
 
-f_prim_true = -sin(x) - 1
 plot(x, f_prim_true, type = "l")
 lines(x, forw, col = "red")
 lines(x, back, col = "blue")
 lines(x, cent, col = "green")
 
+legend("bottomleft",
+       legend = c("True f'(x)", "Forward diff", "Backward diff", "Central diff"),
+       col = c("black", "red", "blue", "green"),
+       lty = 1, lwd = 2, bty = "n")
+```
 
 ## (b)
+```{r}
 NewtonRapshon <- function(f, fprime = NULL, x0, maxiter = 100, h = 1e-6, epsilon = 1e-10) {
   x_old <- x0
   for (iter in 1:maxiter) {
@@ -132,10 +202,10 @@ NewtonRapshon <- function(f, fprime = NULL, x0, maxiter = 100, h = 1e-6, epsilon
   }
   return(x_new)
 }
-
-NewtonRapshon(f, NULL, 0)
+```
 
 ## (c)
+```{r}
 f = function(x) {
   return(cos(x) - x)
 }
@@ -150,9 +220,15 @@ plot(x, f(x), type = "l")
 points(num_diff, f(num_diff), col = "red")
 points(num_true, f(num_true), col = "blue")
 
+legend("bottomleft",
+       legend = c("Numeric diff", "Numeric true"),
+       col = c("red", "blue"),
+       lty = 1, lwd = 2, bty = "n")
+```
 
 # Problem 04
 ## (a)
+```{r}
 LeftRectangle = function(f, a, b, n) {
   h = (b - a) / n
   answer = 0
@@ -163,8 +239,10 @@ LeftRectangle = function(f, a, b, n) {
   }
   return(h * answer)
 }
+```
 
 ## (b)
+```{r}
 Trapezoid = function(f, a, b, n) {
   h = (b - a) / n
   answer = 0
@@ -178,8 +256,10 @@ Trapezoid = function(f, a, b, n) {
   answer = h/2 * (f0 + 2 * answer + fn)
   return(answer)
 }
+```
 
 ## (c)
+```{r}
 Simpson = function(f, a, b, n) {
   h = (b - a) / n
   odd_sum = 0; even_sum = 0
@@ -196,8 +276,10 @@ Simpson = function(f, a, b, n) {
   
   return(answer)
 }
+```
 
 ## (d)
+```{r}
 f = function(x) {
   return(sin(x))
 }
@@ -206,8 +288,20 @@ a = 0; b = pi; n = 100
 LeftRectangle_val = LeftRectangle(f, a, b, n)
 Trapezoid_val = Trapezoid(f, a, b, n)
 Simpson_val = Simpson(f, a, b, n)
+```
+
+\[
+\begin{array}{l|c}
+\textbf{Method} & \textbf{Estimated Value} \\
+\hline
+\text{Left Rectangle} & `r round(LeftRectangle_val, 5)` \\
+\text{Trapezoid} & `r round(Trapezoid_val, 5)` \\
+\text{Simpson} & `r round(Simpson_val, 5)` \\
+\end{array}
+\]
 
 ## (e)
+```{r}
 true_val = -cos(b) + cos(a)
 n_list = c(10, 30, 60, 100, 150, 200)
 errors = data.frame(
@@ -216,16 +310,16 @@ errors = data.frame(
   trap = sapply(n_list, function(n) abs(true_val - Trapezoid(f, a, b, n))),
   simp = sapply(n_list, function(n) abs(true_val - Simpson(f, a, b, n)))
 )
+```
 
+```{r}
 library(tidyr)
 
-# --- 데이터를 long 형태로 변환 ---
 errors_long <- errors %>%
   pivot_longer(cols = c(left, trap, simp),
                names_to = "Method",
                values_to = "Error")
 
-# --- ggplot으로 시각화 ---
 ggplot(errors_long, aes(x = n, y = log(Error), color = Method)) +
   geom_line(linewidth = 1) +
   geom_point(size = 1) +
@@ -239,17 +333,22 @@ ggplot(errors_long, aes(x = n, y = log(Error), color = Method)) +
     values = c("left" = "red", "trap" = "blue", "simp" = "green"),
     labels = c("Left Rectangle", "Trapezoid", "Simpson")
   )
+```
 
 # Problem 05
 ## (a)
+```{r}
 A = matrix(c(4, 2, 2,
              2, 5, 1, 
              2, 1, 3), 3)
 U = chol(A)
 L = t(U)
+
 all.equal(A, L %*% t(L))
+```
 
 ## (b)
+```{r}
 forward_function = function(L, b) {
   n = nrow(L)
   z = c()
@@ -258,8 +357,10 @@ forward_function = function(L, b) {
   }
   return(z)
 }
+```
 
 ## (c)
+```{r}
 backward_function = function(L, z) {
   n = nrow(L)
   x = c()
@@ -269,46 +370,28 @@ backward_function = function(L, z) {
   }
   return(x)
 }
+```
 
-# backward_function(L, b)
 ## (d)
+```{r}
 b = c(1, -2, 3)
 z = forward_function(L, b)
 x = backward_function(L, z)
 
 all.equal(x, solve(A, b))
-
+```
 
 # Problem 06
-set.seed(1)
-n = 150
-X = matrix(runif(n, -1, 1), ncol = 1)
-ftrue = function(x) sin(2*pi*x) + 0.5 * cos(4*pi*x)
-y = ftrue(X[, 1]) + rnorm(n, sd = 0.1)
 ## (a)
+```{r}
 GaussianKernal = function(xi, xj, rho = 1) {
   answer = exp(-rho * abs(xi - xj)**2)
   return(answer)
 }
-GaussianKernal(X[1], X[2])
+```
 
-## (b)
-K = matrix(NA, nrow = n, ncol = n)
-for (i in 1:n) {
-  for (j in 1:n) {
-    K[i, j] = GaussianKernal(X[i], X[j])
-  }
-}
-
-lambda = 0.0001
-positive_matrix = K + diag(rep(lambda, n))
-L = t(chol(positive_matrix))
-alpha = backward_function(L, z = forward_function(L, y))
-
-x0 = 1
-pred = t(GaussianKernal(x0, X)) %*% alpha
-
-
+##(b)
+```{r}
 KernalRidgeRegression = function(X, y, lambda = 0.0001) {
   n = nrow(X)
   krr_model = matrix(NA, nrow = n, ncol = n)
@@ -318,7 +401,7 @@ KernalRidgeRegression = function(X, y, lambda = 0.0001) {
     }
   }
   
-  positive_matrix = K + diag(rep(lambda, n))
+  positive_matrix = krr_model + diag(rep(lambda, n))
   L = t(chol(positive_matrix))
   
   alpha = backward_function(L, z = forward_function(L, y))
@@ -330,9 +413,10 @@ KernalRidgeRegression = function(X, y, lambda = 0.0001) {
   
   return(krr_model)
 }
-tmp = KernalRidgeRegression(X, y, lambda = 0.00001)
+```
 
 ## (c)
+```{r}
 predict.krr = function(model, x) {
   X_train = attr(model, "X")
   alpha = attr(model, "alpha")
@@ -341,9 +425,10 @@ predict.krr = function(model, x) {
   y_pred = k_val %*% alpha
   return(y_pred)
 }
-predict(tmp, 0.5)
+```
 
 ## (d)
+```{r}
 plot.krr = function(model, ...) {
   x_grid = seq(-1, 1, length.out = 300)
   y_pred = predict(model, x_grid)
@@ -354,5 +439,16 @@ plot.krr = function(model, ...) {
   plot(x, y, col = "black")
   lines(x_grid, y_pred, col = "red")
 }
-plot(tmp)
+```
 
+## (e)
+```{r}
+set.seed(1)
+n = 150
+X = matrix(runif(n, -1, 1), ncol = 1)
+ftrue = function(x) sin(2*pi*x) + 0.5 * cos(4*pi*x)
+y = ftrue(X[, 1]) + rnorm(n, sd = 0.1)
+
+kernal_model = KernalRidgeRegression(X, y)
+plot(kernal_model)
+```
